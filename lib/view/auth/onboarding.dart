@@ -4,7 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/Constants/app_images.dart';
-import 'package:todo/view/auth/login_screen.dart';
+import 'package:todo/view/auth/signup_screen.dart';
 import 'package:todo/widget/button/commonbutton.dart';
 
 class Onboarding extends StatefulWidget {
@@ -43,7 +43,7 @@ class _OnboardingState extends State<Onboarding> {
           ComonButton(
               title: 'get started',
               onTap: () {
-                Get.to(LoginScreen());
+                Get.to(SignUpScreen());
                 // Navigator.push(context,
                 //     MaterialPageRoute(builder: (context) => LoginScreen()));
               })

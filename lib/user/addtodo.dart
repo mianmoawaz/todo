@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/Constants/app_icons.dart';
 import 'package:todo/user/addtohome.dart';
-import 'package:todo/view/auth/signup_screen.dart';
+import 'package:todo/view/auth/login_screen.dart';
 import 'package:todo/widget/button/commonbutton.dart';
 import 'package:todo/widget/fields/customtextfield.dart';
 
@@ -30,7 +30,7 @@ class _AddtodoState extends State<Addtodo> {
                 padding: const EdgeInsets.only(top: 45, right: 340, left: 15),
                 child: GestureDetector(
                   onTap: () {
-                    Get.to(SignupScreen());
+                    Get.to(LoginScreen());
                     // Navigator.push(context,
                     //     MaterialPageRoute(builder: (context) => SignupScreen()));
                   },

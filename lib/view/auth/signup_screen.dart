@@ -1,129 +1,168 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+
 import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/Constants/app_icons.dart';
-import 'package:todo/Constants/app_images.dart';
-import 'package:todo/user/addtodo.dart';
-import 'package:todo/view/auth/forgotpassword.dart';
+import 'package:todo/user/addtohome.dart';
 import 'package:todo/view/auth/login_screen.dart';
-import 'package:todo/widget/button/commonbutton.dart';
 import 'package:todo/widget/fields/customtextfield.dart';
 
-class SignupScreen extends StatelessWidget {
-  const SignupScreen({super.key});
+import '../../widget/button/commonbutton.dart';
+
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController PasswordController = TextEditingController();
+  final TextEditingController ConfirmPasswordController =
+      TextEditingController();
+
+  bool isLoading = false;
+  @override
   Widget build(BuildContext context) {
-    final TextEditingController emailcontroller = TextEditingController();
-    final TextEditingController confirmpasswordcontroller =
-        TextEditingController();
-    final _formkey = GlobalKey<FormState>();
+    final _formKey = GlobalKey<FormState>();
     return Scaffold(
-        backgroundColor: Color(0xffEDEDED),
-        body: Form(
-            key: _formkey, // Fixed key issue
-            child: Column(children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 60, right: 340, left: 15),
-                child: GestureDetector(
-                  onTap: () {
-                    Get.back();
-                  },
-                  child: Icon(
-                    AppIcons.back,
-                    size: 30,
-                  ),
+        backgroundColor: const Color.fromARGB(255, 244, 243, 243),
+        body: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 324, top: 32, left: 14),
+                  child: GestureDetector(
+                      onTap: () {
+                        //  Navigator.pop(context,  MaterialPageRoute(builder: (context) => OnboardingScreen(),));
+                      },
+                      child: Icon(
+                        AppIcons.back,
+                        size: 40.sp,
+                      )),
                 ),
-              ),
-              SizedBox(
-                height: 40.h,
-              ),
-              Text(
-                textAlign: TextAlign.center,
-                'Welcome Back!',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-              ),
-              SizedBox(
-                height: 35.h,
-              ),
-              Image.asset(AppImages.young),
-              SizedBox(
-                height: 15.h,
-              ),
-              CommonTextfield(
-                hintText: 'Enter your email address',
-                controller: emailcontroller,
-                validator: (value) {
-                  // Fixed the validator function
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 29.h,
-              ),
-              CommonTextfield(
-                hintText: 'Confirm password',
-                controller: confirmpasswordcontroller,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your confirmpassword';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 50.h,
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Forgotpassword()));
-                },
-                child: Text(
-                  'Forgot Password ?',
+                SizedBox(
+                  height: 79.h,
+                ),
+                Text(
+                  'Welcome Onboard!',
                   style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.green),
+                      color: AppColors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30.sp),
                 ),
-              ),
-              SizedBox(
-                height: 40.h,
-              ),
-              ComonButton(
-                  title: 'sign in',
-                  onTap: () {
-                    if (_formkey.currentState!.validate()) {
-                      Get.to(Addtodo());
-                    }
-                  }),
-              Row(
-                children: [
-                  Text(
-                    '                       Dont have an account ?',
+                SizedBox(
+                  height: 18.h,
+                ),
+                Text('Let’s help you meet up your task',
                     style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.black),
+                      color: AppColors.black,
+                      fontSize: 19.5.sp,
+                    )),
+                SizedBox(
+                  height: 30.h,
+                ),
+                CommonTextfield(
+                    validator: (value) {
+                      if (value == '' || value == null) {
+                        return 'Please enter your Full Name';
+                      }
+                      return null;
+                    },
+                    hintText: 'Enter your Full Name',
+                    controller: nameController),
+                SizedBox(
+                  height: 25.h,
+                ),
+                CommonTextfield(
+                    validator: (value) {
+                      if (value == '' || value == null) {
+                        return 'Please enter your email';
+                      }
+                      return null;
+                    },
+                    hintText: 'Enter your Email address ',
+                    controller: emailController),
+                SizedBox(
+                  height: 25.h,
+                ),
+                CommonTextfield(
+                    validator: (value) {
+                      if (value == '' || value == null) {
+                        return 'Please enter Create a Password';
+                      }
+                      return null;
+                    },
+                    hintText: 'Create a Password',
+                    controller: PasswordController),
+                SizedBox(
+                  height: 26.h,
+                ),
+                CommonTextfield(
+                    validator: (value) {
+                      if (value == '' || value == null) {
+                        return 'Please enter Confirm your Password';
+                      }
+                      return null;
+                    },
+                    hintText: 'Confirm your Password',
+                    controller: ConfirmPasswordController),
+                SizedBox(
+                  height: 98.h,
+                ),
+                ComonButton(
+                    isLoding: isLoading,
+                    title: 'Sign Up ',
+                    onTap: () async {
+                      if (_formKey.currentState!.validate()) {
+                        try {
+                          setState(() {
+                            isLoading = true;
+                          });
+
+                          await FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                            email: emailController.text,
+                            password: PasswordController.text,
+                          );
+                          Get.to(() => Addtohome());
+                        } catch (e) {
+                          Get.snackbar('Error ', e.toString());
+                        }
+                      }
+                    }),
+                Padding(
+                  padding: const EdgeInsets.only(left: 80, top: 40),
+                  child: Row(
+                    children: [
+                      Text('Already have an account ? '),
+                      GestureDetector(
+                          onTap: () {
+                            Get.to(() => LoginScreen());
+                            setState(() {
+                              isLoading = false;
+                            });
+                          },
+                          child: Text(
+                            'Sign In',
+                            style: TextStyle(
+                                color: AppColors.green,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20.sp),
+                          ))
+                    ],
                   ),
-                  SizedBox(
-                    height: 41.h,
-                  ),
-                  Text(
-                    'sign up',
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.green),
-                  ),
-                ],
-              )
-            ])));
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }

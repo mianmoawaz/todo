@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo/view/auth/login_screen.dart';
+import 'package:todo/view/auth/signup_screen.dart';
 
 class AppImages {
   static const splash =

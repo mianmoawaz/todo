@@ -1,31 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:todo/Constants/app_colors.dart';
 
-class ComonButton extends StatefulWidget {
+class ComonButton extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
+  final bool? isLoding;
+  const ComonButton(
+      {super.key,
+      required this.title,
+      required this.onTap,
+      this.isLoding = false});
 
-  const ComonButton({super.key, required this.title, required this.onTap});
-
-  @override
-  State<ComonButton> createState() => _ComonButtonState();
-}
-
-class _ComonButtonState extends State<ComonButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: onTap,
       child: Container(
+          alignment: Alignment.center,
           child: Center(
-            child: Text(
-              widget.title,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.white),
-            ),
+            child: isLoding == true
+                ? CircularProgressIndicator(
+                    color: AppColors.white,
+                  )
+                : Text(
+                    title,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.white),
+                  ),
           ),
           height: 44.h,
           width: 200,
