@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/Constants/app_images.dart';
 import 'package:todo/view/auth/signup_screen.dart';
@@ -43,9 +44,9 @@ class _OnboardingState extends State<Onboarding> {
           ComonButton(
               title: 'get started',
               onTap: () {
+                final box = GetStorage();
+                box.write('onboarding', true);
                 Get.to(SignUpScreen());
-                // Navigator.push(context,
-                //     MaterialPageRoute(builder: (context) => LoginScreen()));
               })
         ],
       ),

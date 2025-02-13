@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:todo/view/auth/onboarding.dart';
+import 'package:todo/view/auth/signup_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -11,16 +13,23 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final box = GetStorage();
   void initState() {
     super.initState();
     // Timer for navigation after 3 seconds
     Timer(const Duration(seconds: 5), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                const Onboarding()), // Replace with your target screen
-      );
+      final bool onboardingply = box.read('onboarding');
+      if (onboardingply) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => SignUpScreen()));
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  const Onboarding()), // Replace with your target screen
+        );
+      }
     });
   }
 

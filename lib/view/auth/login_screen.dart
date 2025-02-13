@@ -6,6 +6,7 @@ import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/Constants/app_icons.dart';
 import 'package:todo/Constants/app_images.dart';
 import 'package:todo/user/addtohome.dart';
+import 'package:todo/view/auth/forgotpassword.dart';
 import 'package:todo/view/auth/signup_screen.dart';
 import 'package:todo/widget/button/commonbutton.dart';
 import 'package:todo/widget/fields/customtextfield.dart';
@@ -20,8 +21,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailcontroller = TextEditingController();
   final TextEditingController passwordcontroller = TextEditingController();
-  final TextEditingController confirmpasswordcontroller =
-      TextEditingController();
+
   final _formkey = GlobalKey<FormState>();
   bool isLodingg = false;
   @override
@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 CommonTextfield(
                   hintText: 'Confirm password',
-                  controller: confirmpasswordcontroller,
+                  controller: passwordcontroller,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your confirmpassword';
@@ -89,12 +89,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.to(LoginScreen());
+                    Get.to(Forgotpassword());
                   },
                   child: Text(
-                    'Forgot Password ?',
+                    'Forgot password?',
                     style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 15,
                         fontWeight: FontWeight.w500,
                         color: AppColors.green),
                   ),
@@ -119,14 +119,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             isLodingg = false;
                           });
-                        } catch (e) {
+                        } on FirebaseAuthException catch (e) {
                           Get.snackbar('Error', e.toString(),
                               backgroundColor: AppColors.red);
+                          setState(() {
+                            isLodingg = false;
+                          });
                         }
                       }
                     }),
                 Padding(
-                  padding: const EdgeInsets.only(left: 40),
+                  padding: const EdgeInsets.only(left: 80),
                   child: Row(
                     children: [
                       Text(

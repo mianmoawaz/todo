@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:todo/view/auth/signup_screen.dart';
-
 class AppImages {
   static const splash =
       "assets/young man sitting on sofa with cat next to him.png";

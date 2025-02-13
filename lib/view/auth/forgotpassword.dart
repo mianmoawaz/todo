@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/Constants/app_icons.dart';
-import 'package:todo/user/addtodo.dart';
 import 'package:todo/view/auth/login_screen.dart';
 import 'package:todo/widget/button/commonbutton.dart';
 import 'package:todo/widget/fields/customtextfield.dart';
@@ -16,9 +16,9 @@ class Forgotpassword extends StatefulWidget {
 }
 
 class _ForgotpasswordState extends State<Forgotpassword> {
-  final TextEditingController forgotcontroller = TextEditingController();
   final TextEditingController emailcontroller = TextEditingController();
   final _formkey = GlobalKey<FormState>();
+  bool isLodingg = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,9 +60,8 @@ class _ForgotpasswordState extends State<Forgotpassword> {
               ),
               CommonTextfield(
                 hintText: 'forgot password',
-                controller: forgotcontroller,
+                controller: emailcontroller,
                 validator: (value) {
-                  // Fixed the validator function
                   if (value == null || value.isEmpty) {
                     return 'Please enter your forgot password';
                   }
@@ -76,9 +75,23 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                   title: 'forgot password',
                   onTap: () async {
                     if (_formkey.currentState!.validate()) {
-                      await FirebaseAuth.instance
-                          .sendPasswordResetEmail(email: emailcontroller.text);
-                      Get.to(LoginScreen());
+                      try {
+                        setState(() {
+                          isLodingg = true;
+                        });
+                        await FirebaseAuth.instance.sendPasswordResetEmail(
+                            email: emailcontroller.text);
+                        Get.to(LoginScreen());
+                        setState(() {
+                          isLodingg = false;
+                        });
+                      } on FirebaseAuthException catch (e) {
+                        Get.snackbar('Error', e.toString(),
+                            backgroundColor: AppColors.red);
+                        setState(() {
+                          isLodingg = false;
+                        });
+                      }
                     }
                   }),
             ]),
