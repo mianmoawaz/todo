@@ -2,9 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart'; // GetStorage ka import
+import 'package:get_storage/get_storage.dart';
 import 'package:todo/firebase_options.dart';
-import 'package:todo/view/auth/onboarding.dart';
+import 'package:todo/user/addtohome.dart';
+import 'package:todo/view/auth/practice.dart';
 import 'package:todo/view/auth/splash_screen.dart';
 
 void main() async {

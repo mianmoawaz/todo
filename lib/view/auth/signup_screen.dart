@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +8,7 @@ import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/Constants/app_icons.dart';
 import 'package:todo/user/addtohome.dart';
 import 'package:todo/view/auth/login_screen.dart';
+import 'package:todo/view/auth/onboarding.dart';
 import 'package:todo/widget/fields/customtextfield.dart';
 
 import '../../widget/button/commonbutton.dart';
@@ -40,7 +42,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   padding: const EdgeInsets.only(right: 324, top: 32, left: 14),
                   child: GestureDetector(
                       onTap: () {
-                        //  Navigator.pop(context,  MaterialPageRoute(builder: (context) => OnboardingScreen(),));
+                        Get.to(Onboarding());
                       },
                       child: Icon(
                         AppIcons.back,
@@ -131,6 +133,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             email: emailController.text,
                             password: PasswordController.text,
                           );
+                          User? user = FirebaseAuth.instance.currentUser;
+                          DocumentReference docRef = FirebaseFirestore.instance
+                              .collection('userInfo')
+                              .doc();
+                          await docRef.set({
+                            'email': emailController.text,
+                            'name': nameController.text,
+                            'password': PasswordController.text
+                          });
+
                           Get.to(() => Addtohome());
                         } catch (e) {
                           Get.snackbar('Error ', e.toString());

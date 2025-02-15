@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:todo/Constants/app_colors.dart';
+import 'package:todo/Constants/app_icons.dart';
+import 'package:todo/user/addtodo.dart';
 import 'package:todo/user/titleofyourtasks.dart';
 
 class Addtohome extends StatefulWidget {
@@ -57,7 +59,7 @@ class _AddtohomeState extends State<Addtohome> {
                         'assets/handsome 2 1.png',
                       ),
                     ),
-                    SizedBox(height: 10), // Space between avatar and text
+                    SizedBox(height: 10),
                     Text(
                       'Welcome Fizayomi',
                       style: TextStyle(
@@ -141,21 +143,6 @@ class _AddtohomeState extends State<Addtohome> {
                     SizedBox(
                       height: 30,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 270),
-                      child: Container(
-                        child: Icon(
-                          Icons.add,
-                          size: 55,
-                          color: Colors.white,
-                        ),
-                        height: 70,
-                        width: 70,
-                        decoration: BoxDecoration(
-                            color: AppColors.green,
-                            borderRadius: BorderRadius.circular(100)),
-                      ),
-                    )
                   ],
                 ),
                 height: 650.h,
@@ -168,6 +155,18 @@ class _AddtohomeState extends State<Addtohome> {
           ),
         ]),
       ),
+      floatingActionButton: FloatingActionButton(
+          shape: CircleBorder(),
+          backgroundColor: AppColors.green,
+          child: Center(
+            child: Icon(
+              Icons.add,
+              color: AppColors.white,
+            ),
+          ),
+          onPressed: () {
+            Get.to(Addtodo());
+          }),
     );
   }
 }
