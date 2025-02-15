@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,7 @@ import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/Constants/app_icons.dart';
 import 'package:todo/user/addtodo.dart';
 import 'package:todo/user/titleofyourtasks.dart';
+import 'package:todo/utils/date_andtime.dart';
 
 class Addtohome extends StatefulWidget {
   const Addtohome({super.key});
@@ -83,35 +85,40 @@ class _AddtohomeState extends State<Addtohome> {
                             color: AppColors.black),
                       ),
                     ),
-                    ListView.builder(
-                        itemCount: 3,
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (BuildContext context, index) {
-                          return InkWell(
-                            onTap: () {},
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 10.0, right: 10.0, top: 5),
-                              child: Card(
-                                color: _getRandomColor(),
-                                elevation: 1,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(top: 8, bottom: 8),
+                    FutureBuilder<QuerySnapshot>(
+                      future:
+                          FirebaseFirestore.instance.collection('todo').get(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.docs.isEmpty) {
+                          return Center(child: Text('No tasks available'));
+                        } else {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (BuildContext context, index) {
+                              var todo = snapshot.data!.docs[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0, vertical: 5),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: _getRandomColor(),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                   child: ListTile(
                                     onTap: () {
                                       Get.to(Titleofyourtasks());
-                                      // Navigator.push(
-                                      //     context,
-                                      //     MaterialPageRoute(
-                                      //         builder: (context) =>
-                                      //             Titleofyourtasks()));
                                     },
                                     title: Text(
-                                      "Title of your tasks",
+                                      todo['title'] ?? 'No Title',
                                       style: TextStyle(
                                         fontSize: 17.sp,
                                         fontWeight: FontWeight.w500,
@@ -119,7 +126,7 @@ class _AddtohomeState extends State<Addtohome> {
                                       ),
                                     ),
                                     subtitle: Text(
-                                      "description of your tasks...",
+                                      todo['description'] ?? 'No Description',
                                       style: TextStyle(
                                         fontSize: 10.sp,
                                         fontWeight: FontWeight.w500,
@@ -127,7 +134,8 @@ class _AddtohomeState extends State<Addtohome> {
                                       ),
                                     ),
                                     trailing: Text(
-                                      _getRandomTime(),
+                                      DateTimeUtil.formatTime(
+                                          todo['time'] ?? ''),
                                       style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w500,
@@ -136,10 +144,12 @@ class _AddtohomeState extends State<Addtohome> {
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           );
-                        }),
+                        }
+                      },
+                    ),
                     SizedBox(
                       height: 30,
                     ),

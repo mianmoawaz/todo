@@ -111,7 +111,7 @@ class _AddtodoState extends State<Addtodo> {
                             'docid': docRef.id,
                             'title': titlecontroller.text,
                             'description': descriptioncontroller.text,
-                            'time': DateTime.now(),
+                            'time': DateTime.now().toString(),
                             "userid": user!.uid.toString()
                           });
                           setState(() {
