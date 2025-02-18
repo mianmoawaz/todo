@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/Constants/app_icons.dart';
 import 'package:todo/Constants/app_images.dart';
-import 'package:todo/user/addtodo.dart';
 import 'package:todo/user/addtohome.dart';
 import 'package:todo/view/auth/forgotpassword.dart';
 import 'package:todo/view/auth/signup_screen.dart';
@@ -35,10 +34,10 @@ class _LoginScreenState extends State<LoginScreen> {
               scrollDirection: Axis.vertical,
               child: Column(children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 60, right: 340, left: 15),
+                  padding: const EdgeInsets.only(top: 60, right: 300),
                   child: GestureDetector(
                     onTap: () {
-                      Get.back();
+                      Get.to(SignUpScreen());
                     },
                     child: Icon(
                       AppIcons.back,
@@ -104,31 +103,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 40.h,
                 ),
                 ComonButton(
-                    isLoding: isLodingg,
-                    title: 'sign in',
-                    onTap: () async {
-                      if (_formkey.currentState!.validate()) {
-                        try {
-                          setState(() {
-                            isLodingg = true;
-                          });
-                          await FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
-                                  email: emailcontroller.text,
-                                  password: passwordcontroller.text);
-                          Get.to(Addtohome());
-                          setState(() {
-                            isLodingg = false;
-                          });
-                        } on FirebaseAuthException catch (e) {
-                          Get.snackbar('Error', e.toString(),
-                              backgroundColor: AppColors.red);
-                          setState(() {
-                            isLodingg = false;
-                          });
-                        }
-                      }
-                    }),
+                  isLoding: isLodingg,
+                  title: 'sign in',
+                  onTap: () => login(),
+                ),
                 Padding(
                   padding: const EdgeInsets.only(left: 80),
                   child: Row(
@@ -160,5 +138,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 )
               ]),
             )));
+  }
+
+  Future login() async {
+    if (_formkey.currentState!.validate()) {
+      try {
+        setState(() {
+          isLodingg = true;
+        });
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: emailcontroller.text, password: passwordcontroller.text);
+        Get.to(Addtohome());
+        setState(() {
+          isLodingg = false;
+        });
+      } on FirebaseAuthException catch (e) {
+        Get.snackbar('Error', e.toString(), backgroundColor: AppColors.red);
+        setState(() {
+          isLodingg = false;
+        });
+      }
+    }
   }
 }

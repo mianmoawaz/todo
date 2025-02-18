@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:todo/Constants/app_colors.dart';
-import 'package:todo/Constants/app_icons.dart';
 import 'package:todo/user/addtodo.dart';
-import 'package:todo/user/titleofyourtasks.dart';
+import 'package:todo/user/detail_screen.dart';
 import 'package:todo/utils/date_andtime.dart';
 
 class Addtohome extends StatefulWidget {
@@ -85,9 +84,10 @@ class _AddtohomeState extends State<Addtohome> {
                             color: AppColors.black),
                       ),
                     ),
-                    FutureBuilder<QuerySnapshot>(
-                      future:
-                          FirebaseFirestore.instance.collection('todo').get(),
+                    StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('todo')
+                          .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -115,10 +115,32 @@ class _AddtohomeState extends State<Addtohome> {
                                   ),
                                   child: ListTile(
                                     onTap: () {
-                                      Get.to(Titleofyourtasks());
+                                      Get.to(DetailScreen(), arguments: {
+                                        'title': snapshot.data!.docs[index]
+                                            ['title'],
+                                        'description': snapshot
+                                            .data!.docs[index]['description'],
+                                        'docid': snapshot.data!.docs[index]
+                                            ['docid'],
+                                      });
                                     },
+                                    leading: GestureDetector(
+                                      onTap: () async {
+                                        final String docid = snapshot
+                                            .data!.docs[index]['docid']
+                                            .toString();
+                                        await FirebaseFirestore.instance
+                                            .collection('todo')
+                                            .doc(docid)
+                                            .delete();
+                                      },
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.red,
+                                        child: Icon(Icons.delete),
+                                      ),
+                                    ),
                                     title: Text(
-                                      todo['title'] ?? 'No Title',
+                                      snapshot.data!.docs[index]['title'],
                                       style: TextStyle(
                                         fontSize: 17.sp,
                                         fontWeight: FontWeight.w500,
@@ -126,7 +148,9 @@ class _AddtohomeState extends State<Addtohome> {
                                       ),
                                     ),
                                     subtitle: Text(
-                                      todo['description'] ?? 'No Description',
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      snapshot.data!.docs[index]['description'],
                                       style: TextStyle(
                                         fontSize: 10.sp,
                                         fontWeight: FontWeight.w500,

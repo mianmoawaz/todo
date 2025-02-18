@@ -29,7 +29,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
             scrollDirection: Axis.vertical,
             child: Column(children: [
               Padding(
-                padding: const EdgeInsets.only(top: 60, right: 340, left: 15),
+                padding: const EdgeInsets.only(top: 60, right: 300),
                 child: GestureDetector(
                   onTap: () {
                     Get.to(LoginScreen());

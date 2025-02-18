@@ -23,7 +23,7 @@ class _AddtodoState extends State<Addtodo> {
     final TextEditingController titlecontroller = TextEditingController();
     final TextEditingController descriptioncontroller = TextEditingController();
     final _formkey = GlobalKey<FormState>();
-    bool isLoding = false;
+    bool isLoading = false;
     return Scaffold(
         backgroundColor: Color(0xffEDEDED),
         body: Form(
@@ -32,14 +32,18 @@ class _AddtodoState extends State<Addtodo> {
               scrollDirection: Axis.vertical,
               child: Column(children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 45, right: 340, left: 15),
+                  padding: const EdgeInsets.only(top: 60, right: 300),
                   child: GestureDetector(
                     onTap: () {
                       Get.to(LoginScreen());
                     },
-                    child: Icon(
-                      AppIcons.back,
-                      size: 30,
+                    child: Row(
+                      children: [
+                        Icon(
+                          AppIcons.back,
+                          size: 30,
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -95,13 +99,13 @@ class _AddtodoState extends State<Addtodo> {
                   height: 45.h,
                 ),
                 ComonButton(
-                    isLoding: isLoding,
+                    isLoding: isLoading,
                     title: 'Add to list ',
                     onTap: () async {
                       if (_formkey.currentState!.validate()) {
                         try {
                           setState(() {
-                            isLoding = true;
+                            isLoading = true;
                           });
                           User? user = FirebaseAuth.instance.currentUser;
                           DocumentReference docRef = FirebaseFirestore.instance
@@ -115,13 +119,13 @@ class _AddtodoState extends State<Addtodo> {
                             "userid": user!.uid.toString()
                           });
                           setState(() {
-                            isLoding = false;
+                            isLoading = false;
                           });
                           Get.to(Addtohome());
                         } catch (e) {
                           Get.snackbar('error', e.toString());
                           setState(() {
-                            isLoding = false;
+                            isLoading = false;
                           });
                         }
                       }

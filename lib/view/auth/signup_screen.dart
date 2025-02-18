@@ -26,11 +26,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController PasswordController = TextEditingController();
   final TextEditingController ConfirmPasswordController =
       TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   bool isLoading = false;
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 244, 243, 243),
         body: SingleChildScrollView(
@@ -119,36 +119,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 98.h,
                 ),
                 ComonButton(
-                    isLoding: isLoading,
-                    title: 'Sign Up ',
-                    onTap: () async {
-                      if (_formKey.currentState!.validate()) {
-                        try {
-                          setState(() {
-                            isLoading = true;
-                          });
-
-                          await FirebaseAuth.instance
-                              .createUserWithEmailAndPassword(
-                            email: emailController.text,
-                            password: PasswordController.text,
-                          );
-                          User? user = FirebaseAuth.instance.currentUser;
-                          DocumentReference docRef = FirebaseFirestore.instance
-                              .collection('userInfo')
-                              .doc();
-                          await docRef.set({
-                            'email': emailController.text,
-                            'name': nameController.text,
-                            'password': PasswordController.text
-                          });
-
-                          Get.to(() => Addtohome());
-                        } catch (e) {
-                          Get.snackbar('Error ', e.toString());
-                        }
-                      }
-                    }),
+                  isLoding: isLoading,
+                  title: 'Sign Up ',
+                  onTap: () => signup(),
+                ),
                 Padding(
                   padding: const EdgeInsets.only(left: 80, top: 40),
                   child: Row(
@@ -175,5 +149,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
         ));
+  }
+
+  Future signup() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        setState(() {
+          isLoading = true;
+        });
+
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: PasswordController.text,
+        );
+        User? user = FirebaseAuth.instance.currentUser;
+        DocumentReference docRef =
+            FirebaseFirestore.instance.collection('userInfo').doc();
+        await docRef.set({
+          'email': emailController.text,
+          'name': nameController.text,
+          'password': PasswordController.text
+        });
+
+        Get.to(() => Addtohome());
+      } catch (e) {
+        Get.snackbar('Error ', e.toString());
+      }
+    }
   }
 }
