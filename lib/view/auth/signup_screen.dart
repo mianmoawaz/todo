@@ -32,7 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color.fromARGB(255, 244, 243, 243),
+        backgroundColor: Color(0xffEDEDED),
         body: SingleChildScrollView(
           child: Form(
             key: _formKey,

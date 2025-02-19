@@ -4,13 +4,13 @@ import 'package:todo/Constants/app_colors.dart';
 class CommonTextfield extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
-  final String? Function(String?)? validator; // Validator Function Added
+  final String? Function(String?)? validator;
 
   const CommonTextfield({
     super.key,
     required this.hintText,
     required this.controller,
-    this.validator, // Validator Parameter
+    this.validator,
   });
 
   @override

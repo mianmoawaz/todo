@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/user/addtodo.dart';
 import 'package:todo/user/detail_screen.dart';
+import 'package:todo/user/profile.dart';
 import 'package:todo/utils/date_andtime.dart';
 
 class Addtohome extends StatefulWidget {
@@ -53,11 +54,16 @@ class _AddtohomeState extends State<Addtohome> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircleAvatar(
-                      backgroundColor: AppColors.green,
-                      radius: 50, // Avatar size
-                      backgroundImage: AssetImage(
-                        'assets/handsome 2 1.png',
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(Profile());
+                      },
+                      child: CircleAvatar(
+                        backgroundColor: AppColors.green,
+                        radius: 50, // Avatar size
+                        backgroundImage: AssetImage(
+                          'assets/handsome 2 1.png',
+                        ),
                       ),
                     ),
                     SizedBox(height: 10),
