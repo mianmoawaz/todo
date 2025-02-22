@@ -1,11 +1,12 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:todo/Constants/app_colors.dart';
+import 'package:todo/utils/snackbar_util.dart';
 import 'package:todo/view/auth/login_screen.dart';
 
 class Profile extends StatefulWidget {
@@ -16,9 +17,20 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  final TextEditingController namecontroller = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final String userid = FirebaseAuth.instance.currentUser!.uid;
+  @override
+  void initState() {
+    super.initState();
+    final arguments = Get.arguments ?? {};
+    nameController.text = arguments['name'] ?? '';
+    emailController.text = arguments['email'] ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final arguments = Get.arguments;
     return Scaffold(
       backgroundColor: Color(0xffEDEDED),
       body: SingleChildScrollView(
@@ -28,18 +40,23 @@ class _ProfileState extends State<Profile> {
             Container(
                 height: 250,
                 width: 400,
-                color: AppColors.green, // Direct color use
+                color: AppColors.green,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 290),
-                        child: Text(
-                          'Save',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                        child: GestureDetector(
+                          onTap: () {
+                            updateUserName();
+                          },
+                          child: Text(
+                            'Save',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
@@ -48,21 +65,18 @@ class _ProfileState extends State<Profile> {
                         alignment: Alignment.center,
                         children: [
                           CircleAvatar(
+                            radius: 50.r,
                             backgroundColor: AppColors.green,
-                            radius: 45,
-                            backgroundImage:
-                                AssetImage('assets/handsome 2 1.png'),
+                            backgroundImage: NetworkImage(arguments['image']),
                           ),
-                          Container(
-                            width: 70,
-                            height: 70,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.grey.withOpacity(0.8),
-                            ),
-                          ),
-                          Icon(Icons.add_photo_alternate,
-                              size: 30, color: Colors.white),
+                          // CircleAvatar(
+                          //   radius: 50.r,
+                          //   backgroundColor: AppColors.white.withOpacity(.5),
+                          //   child: Center(
+                          //     child: Icon(Icons.add_photo_alternate,
+                          //         size: 30, color: AppColors.white),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ])),
@@ -92,9 +106,10 @@ class _ProfileState extends State<Profile> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: TextField(
+                        controller: nameController,
                         decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Fizyomi',
+                            hintText: '',
                             suffixIcon: Padding(
                               padding: const EdgeInsets.only(left: 30),
                               child: Icon(Icons.edit),
@@ -115,10 +130,11 @@ class _ProfileState extends State<Profile> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: TextField(
+                        controller: emailController,
                         readOnly: true,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'abc@gmail.com',
+                          hintText: '',
                         ),
                       ),
                     ),
@@ -179,8 +195,9 @@ class _ProfileState extends State<Profile> {
                             onTap: () async {
                               try {
                                 await FirebaseAuth.instance.signOut();
+                                SnackbarUtil.showSuccess("Logout Successful!");
                               } catch (e) {
-                                print("eroor to signout");
+                                SnackbarUtil.showError('error to logout');
                               }
                               Get.to(LoginScreen());
                             },
@@ -200,5 +217,17 @@ class _ProfileState extends State<Profile> {
         ),
       ),
     );
+  }
+
+  Future updateUserName() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('userInfo')
+          .doc(userid)
+          .update({'name': nameController.text});
+      Get.back();
+    } catch (e) {
+      SnackbarUtil.showError('error');
+    }
   }
 }

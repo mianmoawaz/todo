@@ -8,4 +8,7 @@ class AppColors {
   static const Color list1 = Color(0xffC9A9A9);
   static const Color list2 = Color(0xffB9C9A9);
   static const Color list3 = Color(0xffAAA9C9);
+  static const Color orange = Colors.orange;
+  static const Color blue = Colors.blue;
+  static const Color Teal = Colors.teal;
 }

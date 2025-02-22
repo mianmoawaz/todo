@@ -6,6 +6,7 @@ import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/Constants/app_icons.dart';
 import 'package:todo/Constants/app_images.dart';
 import 'package:todo/user/addtohome.dart';
+import 'package:todo/utils/snackbar_util.dart';
 import 'package:todo/view/auth/forgotpassword.dart';
 import 'package:todo/view/auth/signup_screen.dart';
 import 'package:todo/widget/button/commonbutton.dart';
@@ -148,6 +149,8 @@ class _LoginScreenState extends State<LoginScreen> {
         });
         await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: emailcontroller.text, password: passwordcontroller.text);
+        SnackbarUtil.showSuccess("Login Successful!");
+
         Get.to(Addtohome());
         setState(() {
           isLodingg = false;

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,7 @@ import 'package:todo/user/addtodo.dart';
 import 'package:todo/user/detail_screen.dart';
 import 'package:todo/user/profile.dart';
 import 'package:todo/utils/date_andtime.dart';
+import 'package:todo/utils/loading_util.dart';
 
 class Addtohome extends StatefulWidget {
   const Addtohome({super.key});
@@ -16,6 +18,8 @@ class Addtohome extends StatefulWidget {
   @override
   State<Addtohome> createState() => _AddtohomeState();
 }
+
+final String userid = FirebaseAuth.instance.currentUser!.uid;
 
 class _AddtohomeState extends State<Addtohome> {
   final Random _random = Random();
@@ -46,7 +50,7 @@ class _AddtohomeState extends State<Addtohome> {
           Column(
             children: [
               Container(
-                height: 300.h, // Responsive height
+                height: 300.h,
                 width: 500.h, // Responsive width
                 decoration: BoxDecoration(
                   color: AppColors.green,
@@ -54,26 +58,56 @@ class _AddtohomeState extends State<Addtohome> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        Get.to(Profile());
-                      },
-                      child: CircleAvatar(
-                        backgroundColor: AppColors.green,
-                        radius: 50, // Avatar size
-                        backgroundImage: AssetImage(
-                          'assets/handsome 2 1.png',
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Welcome Fizayomi',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.black),
-                    ),
+                    StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('userInfo')
+                            .doc(userid)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return LoadingUtil.shimmerTile(itemcount: 6);
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!['name'] == '') {
+                            return Text('Todo is not added');
+                          } else {
+                            return GestureDetector(
+                              onTap: () {
+                                Get.to(() => Profile(), arguments: {
+                                  'name': snapshot.data!['name'],
+                                  'image': snapshot.data!['image'],
+                                  'userid': snapshot.data!['userid'],
+                                  'email': snapshot.data!['email'],
+                                });
+                              },
+                              child: Column(
+                                children: [
+                                  Positioned(
+                                    bottom: 120.h,
+                                    child: CircleAvatar(
+                                      radius: 50.r,
+                                      backgroundColor: Color(0xff70968f),
+                                      backgroundImage:
+                                          NetworkImage(snapshot.data!['image']),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 0),
+                                    child: Text(
+                                      " ${snapshot.data!['name']}",
+                                      style: TextStyle(
+                                        color: AppColors.black,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20.sp,
+                                        fontFamily: "Poppins",
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        }),
                   ],
                 ),
               ),
@@ -93,6 +127,7 @@ class _AddtohomeState extends State<Addtohome> {
                     StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection('todo')
+                          .where('userid', isEqualTo: userid)
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==

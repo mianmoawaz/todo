@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/Constants/app_icons.dart';
+import 'package:todo/utils/snackbar_util.dart'; // Import SnackbarUtil
 import 'package:todo/view/auth/login_screen.dart';
 import 'package:todo/widget/button/commonbutton.dart';
 import 'package:todo/widget/fields/customtextfield.dart';
@@ -19,15 +20,17 @@ class _ForgotpasswordState extends State<Forgotpassword> {
   final TextEditingController emailcontroller = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   bool isLodingg = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xffEDEDED),
-        body: Form(
-          key: _formkey,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(children: [
+      backgroundColor: Color(0xffEDEDED),
+      body: Form(
+        key: _formkey,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: [
               Padding(
                 padding: const EdgeInsets.only(top: 60, right: 300),
                 child: GestureDetector(
@@ -40,9 +43,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 65.h,
-              ),
+              SizedBox(height: 65.h),
               Padding(
                 padding: const EdgeInsets.only(right: 25),
                 child: Text(
@@ -51,51 +52,54 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ),
-              SizedBox(
-                height: 35.h,
-              ),
+              SizedBox(height: 35.h),
               Image.asset('assets/Girl and boy sitting with laptop.png'),
-              SizedBox(
-                height: 15.h,
-              ),
+              SizedBox(height: 15.h),
               CommonTextfield(
-                hintText: 'forgot password',
+                hintText: 'Enter your email',
                 controller: emailcontroller,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your forgot password';
+                    return 'Please enter your email';
                   }
                   return null;
                 },
               ),
-              SizedBox(
-                height: 40.h,
-              ),
+              SizedBox(height: 40.h),
               ComonButton(
-                  title: 'forgot password',
-                  onTap: () async {
-                    if (_formkey.currentState!.validate()) {
-                      try {
-                        setState(() {
-                          isLodingg = true;
-                        });
-                        await FirebaseAuth.instance.sendPasswordResetEmail(
-                            email: emailcontroller.text);
-                        Get.to(LoginScreen());
-                        setState(() {
-                          isLodingg = false;
-                        });
-                      } on FirebaseAuthException catch (e) {
-                        Get.snackbar('Error', e.toString(),
-                            backgroundColor: AppColors.red);
-                        setState(() {
-                          isLodingg = false;
-                        });
-                      }
+                title: 'Reset Password',
+                onTap: () async {
+                  if (_formkey.currentState!.validate()) {
+                    try {
+                      setState(() {
+                        isLodingg = true;
+                      });
+
+                      await FirebaseAuth.instance.sendPasswordResetEmail(
+                        email: emailcontroller.text,
+                      );
+
+                      setState(() {
+                        isLodingg = false;
+                      });
+
+                      SnackbarUtil.showSuccess(
+                          "Password reset email sent successfully!");
+                      Get.to(LoginScreen());
+                    } on FirebaseAuthException catch (e) {
+                      setState(() {
+                        isLodingg = false;
+                      });
+
+                      SnackbarUtil.showError(e.message ?? "An error occurred");
                     }
-                  }),
-            ]),
+                  }
+                },
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

@@ -23,7 +23,7 @@ class _AddtodoState extends State<Addtodo> {
     final TextEditingController titlecontroller = TextEditingController();
     final TextEditingController descriptioncontroller = TextEditingController();
     final _formkey = GlobalKey<FormState>();
-    bool isLoading = false;
+    bool isLodingg = false;
     return Scaffold(
         backgroundColor: Color(0xffEDEDED),
         body: Form(
@@ -99,13 +99,13 @@ class _AddtodoState extends State<Addtodo> {
                   height: 45.h,
                 ),
                 ComonButton(
-                    isLoding: isLoading,
+                    isLoding: isLodingg,
                     title: 'Add to list ',
                     onTap: () async {
                       if (_formkey.currentState!.validate()) {
                         try {
                           setState(() {
-                            isLoading = true;
+                            isLodingg = true;
                           });
                           User? user = FirebaseAuth.instance.currentUser;
                           DocumentReference docRef = FirebaseFirestore.instance
@@ -119,13 +119,13 @@ class _AddtodoState extends State<Addtodo> {
                             "userid": user!.uid.toString()
                           });
                           setState(() {
-                            isLoading = false;
+                            isLodingg = false;
                           });
                           Get.to(Addtohome());
                         } catch (e) {
                           Get.snackbar('error', e.toString());
                           setState(() {
-                            isLoading = false;
+                            isLodingg = false;
                           });
                         }
                       }

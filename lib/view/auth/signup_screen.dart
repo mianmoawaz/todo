@@ -26,6 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController PasswordController = TextEditingController();
   final TextEditingController ConfirmPasswordController =
       TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   bool isLoading = false;
@@ -163,12 +164,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
           password: PasswordController.text,
         );
         User? user = FirebaseAuth.instance.currentUser;
+        final String userid = await FirebaseAuth.instance.currentUser!.uid;
         DocumentReference docRef =
-            FirebaseFirestore.instance.collection('userInfo').doc();
+            FirebaseFirestore.instance.collection('userInfo').doc(userid);
         await docRef.set({
           'email': emailController.text,
           'name': nameController.text,
-          'password': PasswordController.text
+          'password': nameController.text,
+          'userid': user!.uid.toString(),
+          'image': '',
         });
 
         Get.to(() => Addtohome());
