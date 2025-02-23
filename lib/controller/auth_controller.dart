@@ -91,6 +91,7 @@ class AuthController extends GetxController {
       Get.offAll(() => LoginScreen());
       SnackbarUtil.showSuccess("Logout Successful!");
     } catch (e) {
+      
       SnackbarUtil.showError("Error logging out: ${e.toString()}");
     }
   }
