@@ -75,8 +75,9 @@ class _AddtohomeState extends State<Addtohome> {
                               onTap: () {
                                 Get.to(() => Profile(), arguments: {
                                   'name': snapshot.data!['name'],
-                                  'image': snapshot.data!['image'],
-                                  'userid': snapshot.data!['userid'],
+                                  'profileImage':
+                                      snapshot.data!['profileImage'],
+                                  'userId': snapshot.data!['userId'],
                                   'email': snapshot.data!['email'],
                                 });
                               },
@@ -87,8 +88,8 @@ class _AddtohomeState extends State<Addtohome> {
                                     child: CircleAvatar(
                                       radius: 50.r,
                                       backgroundColor: Color(0xff70968f),
-                                      backgroundImage:
-                                          NetworkImage(snapshot.data!['image']),
+                                      backgroundImage: NetworkImage(
+                                          snapshot.data!['profileImage']),
                                     ),
                                   ),
                                   Padding(
@@ -112,113 +113,117 @@ class _AddtohomeState extends State<Addtohome> {
                 ),
               ),
               Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 250, top: 15),
-                      child: Text(
-                        'Todo task',
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.black),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 250, top: 15),
+                        child: Text(
+                          'Todo task',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.black),
+                        ),
                       ),
-                    ),
-                    StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('todo')
-                          .where('userid', isEqualTo: userid)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.docs.isEmpty) {
-                          return Center(child: Text('No tasks available'));
-                        } else {
-                          return ListView.builder(
-                            itemCount: snapshot.data!.docs.length,
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (BuildContext context, index) {
-                              var todo = snapshot.data!.docs[index];
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0, vertical: 5),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: _getRandomColor(),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: ListTile(
-                                    onTap: () {
-                                      Get.to(DetailScreen(), arguments: {
-                                        'title': snapshot.data!.docs[index]
-                                            ['title'],
-                                        'description': snapshot
-                                            .data!.docs[index]['description'],
-                                        'docid': snapshot.data!.docs[index]
-                                            ['docid'],
-                                      });
-                                    },
-                                    leading: GestureDetector(
-                                      onTap: () async {
-                                        final String docid = snapshot
-                                            .data!.docs[index]['docid']
-                                            .toString();
-                                        await FirebaseFirestore.instance
-                                            .collection('todo')
-                                            .doc(docid)
-                                            .delete();
+                      StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('todo')
+                            .where('userid', isEqualTo: userid)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.docs.isEmpty) {
+                            return Center(child: Text('No tasks available'));
+                          } else {
+                            return ListView.builder(
+                              itemCount: snapshot.data!.docs.length,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (BuildContext context, index) {
+                                var todo = snapshot.data!.docs[index];
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 5),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: _getRandomColor(),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: ListTile(
+                                      onTap: () {
+                                        Get.to(DetailScreen(), arguments: {
+                                          'title': snapshot.data!.docs[index]
+                                              ['title'],
+                                          'description': snapshot
+                                              .data!.docs[index]['description'],
+                                          'docid': snapshot.data!.docs[index]
+                                              ['docid'],
+                                        });
                                       },
-                                      child: CircleAvatar(
-                                        backgroundColor: Colors.red,
-                                        child: Icon(Icons.delete),
+                                      leading: GestureDetector(
+                                        onTap: () async {
+                                          final String docid = snapshot
+                                              .data!.docs[index]['docid']
+                                              .toString();
+                                          await FirebaseFirestore.instance
+                                              .collection('todo')
+                                              .doc(docid)
+                                              .delete();
+                                        },
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.red,
+                                          child: Icon(Icons.delete),
+                                        ),
                                       ),
-                                    ),
-                                    title: Text(
-                                      snapshot.data!.docs[index]['title'],
-                                      style: TextStyle(
-                                        fontSize: 17.sp,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white,
+                                      title: Text(
+                                        snapshot.data!.docs[index]['title'],
+                                        style: TextStyle(
+                                          fontSize: 17.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                    subtitle: Text(
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      snapshot.data!.docs[index]['description'],
-                                      style: TextStyle(
-                                        fontSize: 10.sp,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white,
+                                      subtitle: Text(
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        snapshot.data!.docs[index]
+                                            ['description'],
+                                        style: TextStyle(
+                                          fontSize: 10.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                    trailing: Text(
-                                      DateTimeUtil.formatTime(
-                                          todo['time'] ?? ''),
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white,
+                                      trailing: Text(
+                                        DateTimeUtil.formatTime(
+                                            todo['time'] ?? ''),
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
-                          );
-                        }
-                      },
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                  ],
+                                );
+                              },
+                            );
+                          }
+                        },
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                    ],
+                  ),
                 ),
                 height: 650.h,
                 width: 400,

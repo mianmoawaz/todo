@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:todo/Constants/app_colors.dart';
 import 'package:todo/Constants/app_icons.dart';
+import 'package:todo/controller/addtodo_controlller.dart';
 import 'package:todo/user/detail_screen.dart';
+import 'package:todo/utils/snackbar_util.dart';
 import 'package:todo/widget/button/commonbutton.dart';
 
 class Update extends StatefulWidget {
@@ -17,7 +19,8 @@ class Update extends StatefulWidget {
 class _UpdateState extends State<Update> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  bool isloadingg = false;
+  AddtodoControlller todocontroller = Get.put(AddtodoControlller());
+  RxBool isloading = false.obs;
   @override
   void initState() {
     super.initState();
@@ -28,6 +31,7 @@ class _UpdateState extends State<Update> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = Get.arguments;
     return Scaffold(
       backgroundColor: Color(0xffEDEDED),
       body: Column(children: [
@@ -78,33 +82,15 @@ class _UpdateState extends State<Update> {
             ),
           ),
         ),
-        ComonButton(
+        Obx(() => ComonButton(
             title: "Update",
-            isLoding: isloadingg,
+            isLoding: todocontroller.isloading.value,
             onTap: () async {
-              final arguments = Get.arguments;
-              final String docid = arguments['docid'];
-              Update(docid);
-            })
+              final String docId = arguments['docid'];
+              await todocontroller.Update(
+                  docId, titleController, descriptionController);
+            }))
       ]),
     );
-  }
-
-  Future Update(String docId) async {
-    try {
-      setState(() {
-        isloadingg = true;
-      });
-      await FirebaseFirestore.instance.collection('todo').doc(docId).update({
-        "title": titleController.text,
-        "description": descriptionController.text
-      });
-      setState(() {
-        isloadingg = false;
-      });
-      Get.back();
-    } catch (e) {
-      Get.snackbar('error', e.toString());
-    }
   }
 }

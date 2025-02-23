@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:todo/Constants/app_colors.dart';
+import 'package:todo/controller/auth_controller.dart';
 import 'package:todo/utils/snackbar_util.dart';
-import 'package:todo/view/auth/login_screen.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -17,15 +17,16 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
+  AuthController authController = Get.put(AuthController());
+
   final String userid = FirebaseAuth.instance.currentUser!.uid;
   @override
   void initState() {
     super.initState();
     final arguments = Get.arguments ?? {};
-    nameController.text = arguments['name'] ?? '';
-    emailController.text = arguments['email'] ?? '';
+
+    authController.nameController.text = arguments['name'] ?? '';
+    authController.emailController.text = arguments['email'] ?? '';
   }
 
   @override
@@ -67,7 +68,8 @@ class _ProfileState extends State<Profile> {
                           CircleAvatar(
                             radius: 50.r,
                             backgroundColor: AppColors.green,
-                            backgroundImage: NetworkImage(arguments['image']),
+                            backgroundImage:
+                                NetworkImage(arguments['profileImage']),
                           ),
                           // CircleAvatar(
                           //   radius: 50.r,
@@ -106,7 +108,7 @@ class _ProfileState extends State<Profile> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: TextField(
-                        controller: nameController,
+                        controller: authController.nameController,
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: '',
@@ -130,7 +132,7 @@ class _ProfileState extends State<Profile> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: TextField(
-                        controller: emailController,
+                        controller: authController.emailController,
                         readOnly: true,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -192,16 +194,9 @@ class _ProfileState extends State<Profile> {
                           width: 10,
                         ),
                         GestureDetector(
-                            onTap: () async {
-                              try {
-                                await FirebaseAuth.instance.signOut();
-                                SnackbarUtil.showSuccess("Logout Successful!");
-                              } catch (e) {
-                                SnackbarUtil.showError('error to logout');
-                              }
-                              Get.to(LoginScreen());
-                            },
-                            child: Text('Logout ')),
+                          onTap: () => authController.logout(),
+                          child: Text('Logout'),
+                        ),
                       ],
                     ),
                   ),
@@ -224,7 +219,7 @@ class _ProfileState extends State<Profile> {
       await FirebaseFirestore.instance
           .collection('userInfo')
           .doc(userid)
-          .update({'name': nameController.text});
+          .update({'name': authController.nameController.text});
       Get.back();
     } catch (e) {
       SnackbarUtil.showError('error');

@@ -1,15 +1,36 @@
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UserModel extends StatefulWidget {
-  const UserModel({super.key});
+class UserModel {
+  String userId;
+  String name;
+  String email;
+  String profileImage;
 
-  @override
-  State<UserModel> createState() => _UserModelState();
-}
+  UserModel({
+    required this.userId,
+    required this.name,
+    required this.email,
+    required this.profileImage,
+  });
 
-class _UserModelState extends State<UserModel> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold();
+  // Convert Firestore Document to UserModel
+  factory UserModel.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return UserModel(
+      userId: data['userId'] ?? '',
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+      profileImage: data['profileImage'] ?? '',
+    );
+  }
+
+  // Convert UserModel to Firestore Document
+  Map<String, dynamic> toFirestore() {
+    return {
+      'userId': userId,
+      'name': name,
+      'email': email,
+      'profileImage': profileImage,
+    };
   }
 }
